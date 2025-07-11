@@ -1,9 +1,29 @@
 # Shopoo - Multi-NoSQL E-commerce Platform
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Node.j### 3. Truy cập ứng dụng
+- **🌐 Web App**: http://localhost:3000
+- **🔐 Đăng nhập**: http://localhost:3000/auth/login
+- **📝 Đăng ký**: http://localhost:3000/auth/register  
+- **📊 Health Check**: http://localhost:3000/health
+- **🗄️ Mongo Express**: http://localhost:8081
+
+#### 🔗 Authentication API Endpoints:
+```bash
+POST /auth/login     # Đăng nhập (JSON response)
+POST /auth/register  # Đăng ký mới  
+GET  /auth/logout    # Đăng xuất (redirect)
+GET  /auth/status    # Kiểm tra trạng thái đăng nhập
+
+# Protected Routes:
+GET  /dashboard              # Redirect theo role
+GET  /dashboard/customer     # Dashboard khách hàng
+GET  /dashboard/shop         # Dashboard cửa hàng  
+GET  /dashboard/admin        # Dashboard admin
+```ps://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-✅-success.svg)](https://www.mongodb.com/)
-[![Authentication](https://img.shields.io/badge/Authentication-✅-success.svg)](https://bcrypt.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-✅%20Active-success.svg)](https://www.mongodb.com/)
+[![Authentication](https://img.shields.io/badge/Authentication-✅%20Complete-success.svg)](https://bcrypt.com/)
+[![Testing](https://img.shields.io/badge/Testing-✅%20Automated-success.svg)](./test_navigation.sh)
 [![Redis](https://img.shields.io/badge/Redis-⚠️%20Ready-orange.svg)](https://redis.io/)
 [![Neo4j](https://img.shields.io/badge/Neo4j-⚠️%20Ready-orange.svg)](https://neo4j.com/)
 [![Cassandra](https://img.shields.io/badge/Cassandra-⚠️%20Ready-orange.svg)](https://cassandra.apache.org/)
@@ -22,6 +42,13 @@ Nền tảng thương mại điện tử với **hệ thống phân quyền hoà
 - **🥈 Bạc**: 5M+ (5% giảm giá)
 - **🏅 Vàng**: 15M+ (10% giảm giá + free ship)
 - **💎 Kim cương**: 50M+ (15% giảm giá + free ship + priority support)
+
+### 🔧 Tech Stack Authentication:
+- **bcrypt**: Mã hóa password an toàn
+- **express-session**: Session management
+- **MongoDB discriminators**: Phân loại user theo role
+- **Role-based middleware**: Bảo vệ routes theo quyền
+- **Comprehensive testing**: Automated test suite cho toàn bộ flow
 
 ## 🚀 Hướng dẫn khởi chạy nhanh
 
@@ -50,22 +77,54 @@ docker compose logs -f app
 - **�📊 Health Check**: http://localhost:3000/health
 - **🗄️ Mongo Express**: http://localhost:8081
 
-### 4. Test Authentication
+### 4. Seed dữ liệu mẫu và Test Authentication
 ```bash
-# Tạo admin đầu tiên (trong container)
-docker exec -it shopoo-app node -e "
-const { Admin } = require('./src/models/User');
-const admin = new Admin({
-  email: 'admin@shopoo.com',
-  password: 'admin123',
-  name: 'Super Admin',
-  permissions: ['user_management', 'shop_management']
-});
-admin.save().then(() => console.log('Admin created'));
-"
+# Tạo dữ liệu mẫu (admin, customers, shops)
+docker exec -it shopoo-app node scripts/seedData.js
+
+# Hoặc chạy test script toàn diện
+docker exec -it shopoo-app ./test_navigation.sh
 ```
 
-### 4. Dừng ứng dụng
+#### 📋 Tài khoản mặc định sau khi seed:
+
+**👑 Admin:**
+- Email: `admin@shopoo.com`
+- Password: `admin123`
+- Quyền: Quản lý toàn hệ thống
+
+**👤 Customers:**
+- Email: `customer1@shopoo.com` (Hạng Bạc)
+- Email: `customer2@gmail.com` (Hạng Kim cương)  
+- Email: `customer3@gmail.com` (Hạng Thường)
+- Password: `customer123` (tất cả)
+
+**🏪 Shops:**
+- Email: `shop1@gmail.com` (Tech Store)
+- Email: `shop2@gmail.com` (Fashion Store)
+- Password: `shop123` (tất cả)
+
+### 5. Test Authentication
+```bash
+# Test toàn bộ authentication flow
+./test_navigation.sh
+
+# Kết quả mong đợi:
+# ✅ Home page (anonymous): OK (200)
+# ✅ Login page: OK (200)
+# ✅ Register page: OK (200)
+# ✅ Customer login: OK
+# ✅ Customer dashboard access: OK (200)
+# ✅ Customer logout: OK (302)
+# ✅ Admin login: OK
+# ✅ Admin dashboard access: OK (200)
+# ✅ Admin logout: OK (302)
+# ✅ Shop login: OK
+# ✅ Shop dashboard access: OK (200)
+# ✅ Shop logout: OK (302)
+```
+
+### 6. Dừng ứng dụng
 ```bash
 docker compose down
 ```
@@ -113,6 +172,8 @@ shopoo/
 │   ├── products.js             # Danh sách sản phẩm
 │   ├── auth.js                 # ✅ Login/Register/Logout
 │   └── dashboard.js            # ✅ Dashboard theo role
+├── 📁 scripts/                 # 🔧 UTILITIES
+│   └── seedData.js             # ✅ Seed dữ liệu mẫu cho development
 ├── 📁 views/                   # EJS TEMPLATES
 │   ├── pages/                  # Các trang chính
 │   │   ├── index.ejs           # Trang chủ
@@ -135,9 +196,10 @@ shopoo/
 │   ├── js/main.js             # JavaScript client-side
 │   └── images/                # Hình ảnh
 ├── 📄 server.js               # Entry point với session middleware
-├── 📄 package.json            # Dependencies (6 packages chính)
+├── 📄 package.json            # Dependencies với bcrypt + express-session
 ├── 📄 docker-compose.yml      # Container orchestration
 ├── 📄 Dockerfile              # Node.js app container
+├── 📄 test_navigation.sh      # ✅ Comprehensive authentication test suite
 └── 📄 .env                    # Environment variables
 ```
 
