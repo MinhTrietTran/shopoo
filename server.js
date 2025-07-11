@@ -1,106 +1,60 @@
 require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
+const express  = require('express');
+const session  = require('express-session');
+const path     = require('path');
+const mongoose = require('mongoose');
 
-// Import multi-database manager
-const dbManager = require('./src/config/databases');
+/* ----- Kết nối Redis (khởi tạo client) ----- */
+require('./src/config/databases/redis');
 
+/* ------------- App & Middlware ------------- */
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Connect to all databases
-dbManager.connectAll()
-    .then(() => console.log('✅ All database connections established'))
-    .catch(err => console.error('❌ Database initialization error:', err));
-
-// Session middleware
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'shopoo-secret-key-123',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false, // Set to true in production with HTTPS
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-}));
-
-// View engine setup
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Middleware
+// JSON, form-data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Session
+app.use(session({
+  secret            : process.env.SESSION_SECRET || 'dev_secret',
+  resave            : false,
+  saveUninitialized : false,
+  cookie: { secure: false }                     
+}));
+
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Make user available in all templates
-app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
-    next();
-});
+/* ------------- View engine (EJS) ------------ */
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));   // gốc = /views
 
-// Routes
-app.use('/', require('./src/routes/web/home'));
+
+//routes
+app.use('/', require('./src/routes/web/home'));       // /
+app.use('/auth', require('./src/routes/web/auth'));   // /auth/*
 app.use('/products', require('./src/routes/web/products'));
-app.use('/auth', require('./src/routes/web/auth'));
 app.use('/dashboard', require('./src/routes/web/dashboard'));
+app.use('/auth/cart', require('./src/routes/web/cart'));
+//404
+app.use('*', (req, res) =>
+  res.status(404).render('pages/404', {
+    title: '404 Not Found',
+    user : req.session?.user || null
+  })
+);
 
-// Health check endpoint
-app.get('/health', async (req, res) => {
-    try {
-        const dbStatus = await dbManager.healthCheck();
-        res.status(200).json({
-            status: 'OK',
-            timestamp: new Date().toISOString(),
-            service: 'Shopoo Multi-NoSQL App',
-            databases: dbStatus
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'ERROR',
-            timestamp: new Date().toISOString(),
-            service: 'Shopoo Multi-NoSQL App',
-            error: error.message
-        });
-    }
-});
+// Kết nối Mongo rồi khởi chạy 
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  'mongodb://admin:password123@mongodb:27017/shopoo?authSource=admin';
 
-// 404 handler
-app.use('*', (req, res) => {
-    res.status(404).render('pages/404', {
-        title: 'Trang không tìm thấy - Shopoo',
-        user: null
-    });
-});
-
-// Error handler
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).render('pages/error', {
-        title: 'Lỗi hệ thống - Shopoo',
-        user: null,
-        error: process.env.NODE_ENV === 'development' ? err : {}
-    });
-});
-
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-    console.log('SIGTERM received, shutting down gracefully...');
-    await dbManager.disconnectAll();
-    process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-    console.log('SIGINT received, shutting down gracefully...');
-    await dbManager.disconnectAll();
-    process.exit(0);
-});
-
-// Start server
-app.listen(PORT, () => {
-    console.log(`🚀 Shopoo Multi-NoSQL server running on port ${PORT}`);
-    console.log(`📱 Web: http://localhost:${PORT}`);
-    console.log(`� Health check: http://localhost:${PORT}/health`);
-    console.log(`🗄️  Multi-Database Architecture Ready`);
-});
+mongoose
+  .connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
+  .then(() => {
+    app.listen(PORT, () =>
+      console.log(`🚀  Server running at http://localhost:${PORT}`)
+    );
+  })
+  .catch(err => console.error('❌  MongoDB connection error:', err));

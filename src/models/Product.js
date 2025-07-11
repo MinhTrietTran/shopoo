@@ -182,7 +182,6 @@ productSchema.index({ 'rating.average': -1 });
 productSchema.index({ price: 1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ featured: 1, status: 1 });
-productSchema.index({ 'seo.slug': 1 });
 
 // Virtual for availability
 productSchema.virtual('available').get(function () {

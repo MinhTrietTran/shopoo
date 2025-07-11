@@ -430,10 +430,29 @@
             window.location.href = url.toString();
         }
 
+        
         function addToCart(productId) {
-            // TODO: Implement add to cart
-            alert('Chức năng giỏ hàng sẽ được triển khai sau!');
+            fetch('/auth/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId, quantity: 1 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Đã thêm vào giỏ hàng!');
+                    if (data.cart && data.cart.items) {
+                        document.getElementById('cart-count').innerText = data.cart.items.length;
+                    }
+                } else {
+                    alert(data.error || 'Có lỗi xảy ra!');
+                }
+            })
+            .catch(() => alert('Có lỗi xảy ra!'));
         }
+
 
         function addToWishlist(productId) {
             // TODO: Implement wishlist
