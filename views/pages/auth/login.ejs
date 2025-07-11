@@ -1,0 +1,163 @@
+<%- include('../../partials/header') %>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (error) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <%= error %>
+                            </div>
+                            <% } %>
+
+                                <form id="loginForm">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Mật khẩu</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                required>
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Ghi nhớ đăng nhập
+                                        </label>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                    </button>
+                                </form>
+
+                                <hr class="my-4">
+
+                                <div class="text-center">
+                                    <p class="mb-2">Chưa có tài khoản?</p>
+                                    <a href="/auth/register" class="btn btn-outline-primary">
+                                        <i class="fas fa-user-plus me-2"></i>Đăng ký ngay
+                                    </a>
+                                </div>
+
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        <a href="/auth/forgot-password" class="text-decoration-none">
+                                            Quên mật khẩu?
+                                        </a>
+                                    </small>
+                                </div>
+                    </div>
+                </div>
+
+                <!-- Role Info -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-info-circle me-2"></i>Các loại tài khoản
+                        </h6>
+                        <small class="text-muted">
+                            <div><strong>Khách hàng:</strong> Mua sắm, tích điểm, hạng thành viên</div>
+                            <div><strong>Cửa hàng:</strong> Bán hàng, quản lý sản phẩm</div>
+                            <div><strong>Admin:</strong> Quản lý hệ thống</div>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            // Handle form submission
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng nhập...';
+
+                try {
+                    const formData = new FormData(loginForm);
+                    const response = await fetch('/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: formData.get('email'),
+                            password: formData.get('password')
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Show success message
+                        const alert = document.createElement('div');
+                        alert.className = 'alert alert-success';
+                        alert.innerHTML = '<i class="fas fa-check me-2"></i>' + result.message;
+                        loginForm.parentNode.insertBefore(alert, loginForm);
+
+                        // Redirect after delay
+                        setTimeout(() => {
+                            window.location.href = result.redirect;
+                        }, 1000);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    // Show error message
+                    const existingAlert = document.querySelector('.alert');
+                    if (existingAlert) existingAlert.remove();
+
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-danger';
+                    alert.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>' + error.message;
+                    loginForm.parentNode.insertBefore(alert, loginForm);
+
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Đăng nhập';
+                }
+            });
+        });
+    </script>
+
+    <%- include('../../partials/footer') %>

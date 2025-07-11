@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
 
 // Import multi-database manager
 const dbManager = require('./src/config/databases');
@@ -13,6 +14,17 @@ dbManager.connectAll()
     .then(() => console.log('✅ All database connections established'))
     .catch(err => console.error('❌ Database initialization error:', err));
 
+// Session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'shopoo-secret-key-123',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true in production with HTTPS
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -22,9 +34,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Make user available in all templates
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
+
 // Routes
 app.use('/', require('./src/routes/web/home'));
 app.use('/products', require('./src/routes/web/products'));
+app.use('/auth', require('./src/routes/web/auth'));
+app.use('/dashboard', require('./src/routes/web/dashboard'));
 
 // Health check endpoint
 app.get('/health', async (req, res) => {

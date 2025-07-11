@@ -35,16 +35,17 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown">
                             <i class="fas fa-user"></i>
-                            <%= user.fullName || user.username %>
+                            <%= user.name || user.email %>
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
                             <li><a class="dropdown-item" href="/auth/profile">Tài khoản của tôi</a></li>
                             <li><a class="dropdown-item" href="/auth/orders">Đơn hàng</a></li>
                             <% if (user.role==='admin' ) { %>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="/admin">Quản trị</a></li>
+                                <li><a class="dropdown-item" href="/dashboard/admin">Quản trị</a></li>
                                 <% } %>
                                     <li>
                                         <hr class="dropdown-divider">

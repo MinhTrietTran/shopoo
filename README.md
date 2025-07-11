@@ -3,11 +3,25 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-✅-success.svg)](https://www.mongodb.com/)
+[![Authentication](https://img.shields.io/badge/Authentication-✅-success.svg)](https://bcrypt.com/)
 [![Redis](https://img.shields.io/badge/Redis-⚠️%20Ready-orange.svg)](https://redis.io/)
 [![Neo4j](https://img.shields.io/badge/Neo4j-⚠️%20Ready-orange.svg)](https://neo4j.com/)
 [![Cassandra](https://img.shields.io/badge/Cassandra-⚠️%20Ready-orange.svg)](https://cassandra.apache.org/)
 
-Nền tảng thương mại điện tử đơn giản được thiết kế để thực hành với nhiều cơ sở dữ liệu NoSQL khác nhau trong một ứng dụng duy nhất.
+Nền tảng thương mại điện tử với **hệ thống phân quyền hoàn chỉnh** và kiến trúc multi-NoSQL database để thực hành.
+
+## 🔐 Tính năng Authentication mới
+
+### Phân quyền 3 vai trò:
+- **👤 Customer**: Mua sắm, tích điểm, hạng thành viên (Bạc, Vàng, Kim cương)
+- **🏪 Shop**: Bán hàng, quản lý sản phẩm (cần admin xác thực)  
+- **👑 Admin**: Quản lý toàn hệ thống
+
+### Hệ thống hạng khách hàng:
+- **Thường**: 0đ (0% giảm giá)
+- **🥈 Bạc**: 5M+ (5% giảm giá)
+- **🏅 Vàng**: 15M+ (10% giảm giá + free ship)
+- **💎 Kim cương**: 50M+ (15% giảm giá + free ship + priority support)
 
 ## 🚀 Hướng dẫn khởi chạy nhanh
 
@@ -31,8 +45,25 @@ docker compose logs -f app
 
 ### 3. Truy cập ứng dụng
 - **🌐 Web App**: http://localhost:3000
-- **📊 Health Check**: http://localhost:3000/health  
+- **� Đăng nhập**: http://localhost:3000/auth/login
+- **📝 Đăng ký**: http://localhost:3000/auth/register  
+- **�📊 Health Check**: http://localhost:3000/health
 - **🗄️ Mongo Express**: http://localhost:8081
+
+### 4. Test Authentication
+```bash
+# Tạo admin đầu tiên (trong container)
+docker exec -it shopoo-app node -e "
+const { Admin } = require('./src/models/User');
+const admin = new Admin({
+  email: 'admin@shopoo.com',
+  password: 'admin123',
+  name: 'Super Admin',
+  permissions: ['user_management', 'shop_management']
+});
+admin.save().then(() => console.log('Admin created'));
+"
+```
 
 ### 4. Dừng ứng dụng
 ```bash
@@ -42,11 +73,12 @@ docker compose down
 ## 🎯 Mục tiêu dự án
 
 Dự án này được tối giản hóa để tập trung vào việc học và thực hành với nhiều loại cơ sở dữ liệu NoSQL:
-- **MongoDB**: ✅ Cơ sở dữ liệu chính cho dữ liệu sản phẩm (đã triển khai)
+- **MongoDB**: ✅ Database chính + User authentication (đã triển khai)
 - **Redis**: ⚠️ Cache và session (sẵn sàng để triển khai)
 - **Neo4j**: ⚠️ Đồ thị quan hệ và gợi ý (sẵn sàng để triển khai)
 - **Cassandra**: ⚠️ Big data và analytics (sẵn sàng để triển khai)
 
+**🔐 Authentication**: bcrypt + express-session + role-based access control  
 **Kiến trúc**: 1 server, nhiều databases để thực hành NoSQL
 
 ## 📋 Yêu cầu hệ thống
@@ -72,13 +104,26 @@ shopoo/
 │   ├── redis.js                # ⚠️ Redis manager (sẵn sàng implement)
 │   ├── neo4j.js                # ⚠️ Neo4j manager (sẵn sàng implement)
 │   └── cassandra.js            # ⚠️ Cassandra manager (sẵn sàng implement)
-├── 📁 src/routes/web/           # Web routes đơn giản
+├── 📁 src/models/              # 🔐 DATABASE MODELS
+│   └── User.js                 # ✅ User authentication với discriminators
+├── 📁 src/middleware/          # 🔐 AUTHENTICATION MIDDLEWARE  
+│   └── auth.js                 # ✅ Role-based access control
+├── 📁 src/routes/web/          # 🌐 WEB ROUTES
 │   ├── home.js                 # Trang chủ
-│   └── products.js             # Danh sách sản phẩm
-├── 📁 views/                   # EJS templates
+│   ├── products.js             # Danh sách sản phẩm
+│   ├── auth.js                 # ✅ Login/Register/Logout
+│   └── dashboard.js            # ✅ Dashboard theo role
+├── 📁 views/                   # EJS TEMPLATES
 │   ├── pages/                  # Các trang chính
 │   │   ├── index.ejs           # Trang chủ
 │   │   ├── products.ejs        # Danh sách sản phẩm
+│   │   ├── auth/               # ✅ Authentication pages
+│   │   │   ├── login.ejs       # Form đăng nhập
+│   │   │   └── register.ejs    # Form đăng ký
+│   │   ├── dashboard/          # ✅ Role-based dashboards
+│   │   │   ├── customer.ejs    # Dashboard khách hàng
+│   │   │   ├── shop.ejs        # Dashboard cửa hàng  
+│   │   │   └── admin.ejs       # Dashboard admin
 │   │   ├── 404.ejs            # Trang lỗi 404
 │   │   └── error.ejs          # Trang lỗi hệ thống
 │   └── partials/              # Các components dùng chung
@@ -89,8 +134,8 @@ shopoo/
 │   ├── css/main.css           # Styles chính
 │   ├── js/main.js             # JavaScript client-side
 │   └── images/                # Hình ảnh
-├── 📄 server.js               # Entry point chính của ứng dụng
-├── 📄 package.json            # Dependencies (4 packages chính)
+├── 📄 server.js               # Entry point với session middleware
+├── 📄 package.json            # Dependencies (6 packages chính)
 ├── 📄 docker-compose.yml      # Container orchestration
 ├── 📄 Dockerfile              # Node.js app container
 └── 📄 .env                    # Environment variables
@@ -225,17 +270,19 @@ curl http://localhost:3000/health
 
 ## � Dependencies & Technology Stack
 
-### Core Dependencies (Tối giản):
+### Core Dependencies (Đã cập nhật):
 ```json
 {
   "dependencies": {
     "express": "^4.18.2",        // Web framework
-    "mongoose": "^7.5.0",        // MongoDB ODM
+    "mongoose": "^8.0.3",        // MongoDB ODM
     "ejs": "^3.1.9",            // Template engine
-    "dotenv": "^16.3.1"         // Environment variables
+    "dotenv": "^16.3.1",        // Environment variables
+    "bcrypt": "^5.1.1",         // 🔐 Password hashing
+    "express-session": "^1.17.3" // 🔐 Session management
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"         // Development auto-reload
+    "nodemon": "^3.0.2"         // Development auto-reload
   }
 }
 ```
@@ -243,6 +290,7 @@ curl http://localhost:3000/health
 ### Technology Stack:
 - **Backend**: Node.js + Express.js
 - **Database**: MongoDB (primary), Redis/Neo4j/Cassandra (ready)
+- **Authentication**: bcrypt + express-session + role-based middleware
 - **Frontend**: EJS templates + Bootstrap 5
 - **Containerization**: Docker + Docker Compose
 - **Environment**: dotenv configuration
@@ -305,12 +353,24 @@ curl http://localhost:3000/health
 
 ## 🎯 Roadmap cho Collaborators
 
+### ✅ COMPLETED: Authentication System 
+```bash
+✅ User models với Mongoose discriminators (Customer, Shop, Admin)
+✅ Password hashing với bcrypt
+✅ Session-based authentication với express-session
+✅ Role-based access control middleware
+✅ Customer tier system (Bạc, Vàng, Kim cương)
+✅ Login/Register/Logout routes và UI
+✅ Dashboard riêng cho từng role
+✅ Shop verification system
+```
+
 ### Phase 1: Redis Implementation (Priority 1)
 ```bash
 # Cần implement:
 □ Redis connection trong redis.js
 □ Caching layer cho products
-□ Session management
+□ Session storage với Redis (thay thế memory sessions)
 □ Add Redis service vào docker-compose.yml
 ```
 
@@ -374,4 +434,6 @@ curl http://localhost:3000/health
 
 **🎯 Mục tiêu chính**: "1 server nhiều db để thực hành nosql" ✅
 
-**🚀 Status**: MongoDB ✅ | Redis ⚠️ | Neo4j ⚠️ | Cassandra ⚠️ 
+**� Authentication**: Complete role-based system ✅
+
+**�🚀 Status**: MongoDB ✅ | Authentication ✅ | Redis ⚠️ | Neo4j ⚠️ | Cassandra ⚠️ 

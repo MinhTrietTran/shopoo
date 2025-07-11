@@ -5,7 +5,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
     res.render('pages/index', {
         title: 'Shopoo - Multi-NoSQL E-commerce Platform',
-        user: null, // Simplified - no authentication
+        user: req.session?.user || null, // Use session user
         categories: [], // Will load from database later
         featuredProducts: [] // Will load from database later
     });
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 router.get('/about', (req, res) => {
     res.render('pages/about', {
         title: 'Giới thiệu - Shopoo Multi-NoSQL',
-        user: null
+        user: req.session?.user || null
     });
 });
 
@@ -23,7 +23,7 @@ router.get('/about', (req, res) => {
 router.get('/contact', (req, res) => {
     res.render('pages/contact', {
         title: 'Liên hệ - Shopoo Multi-NoSQL',
-        user: null
+        user: req.session?.user || null
     });
 });
 

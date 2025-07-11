@@ -1,0 +1,271 @@
+<%- include('../../partials/header') %>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-plus me-2"></i>Đăng ký tài khoản
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (error) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <%= error %>
+                            </div>
+                            <% } %>
+
+                                <form id="registerForm">
+                                    <!-- Role Selection -->
+                                    <div class="mb-4">
+                                        <label class="form-label">Loại tài khoản</label>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="role"
+                                                        value="customer" id="roleCustomer" checked>
+                                                    <label class="form-check-label" for="roleCustomer">
+                                                        <i class="fas fa-user me-2"></i>Khách hàng
+                                                        <small class="d-block text-muted">Mua sắm, tích điểm</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="role"
+                                                        value="shop" id="roleShop">
+                                                    <label class="form-check-label" for="roleShop">
+                                                        <i class="fas fa-store me-2"></i>Cửa hàng
+                                                        <small class="d-block text-muted">Bán hàng online</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Basic Info -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Họ và tên *</label>
+                                                <input type="text" class="form-control" id="name" name="name" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email *</label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">Mật khẩu *</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="password"
+                                                        name="password" required minlength="6">
+                                                    <button class="btn btn-outline-secondary" type="button"
+                                                        id="togglePassword">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <small class="text-muted">Tối thiểu 6 ký tự</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="phone" class="form-label">Số điện thoại</label>
+                                                <input type="tel" class="form-control" id="phone" name="phone">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Shop-specific fields -->
+                                    <div id="shopFields" style="display: none;">
+                                        <hr class="my-4">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="fas fa-store me-2"></i>Thông tin cửa hàng
+                                        </h6>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="shopName" class="form-label">Tên cửa hàng *</label>
+                                                    <input type="text" class="form-control" id="shopName"
+                                                        name="shopName">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="businessLicense" class="form-label">Giấy phép kinh
+                                                        doanh</label>
+                                                    <input type="text" class="form-control" id="businessLicense"
+                                                        name="businessLicense">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="shopAddress" class="form-label">Địa chỉ cửa hàng</label>
+                                            <textarea class="form-control" id="shopAddress" name="address"
+                                                rows="2"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Terms -->
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="terms" required>
+                                        <label class="form-check-label" for="terms">
+                                            Tôi đồng ý với <a href="/terms" target="_blank">Điều khoản sử dụng</a>
+                                            và <a href="/privacy" target="_blank">Chính sách bảo mật</a>
+                                        </label>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                    </button>
+                                </form>
+
+                                <hr class="my-4">
+
+                                <div class="text-center">
+                                    <p class="mb-0">Đã có tài khoản?</p>
+                                    <a href="/auth/login" class="btn btn-outline-primary">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập ngay
+                                    </a>
+                                </div>
+                    </div>
+                </div>
+
+                <!-- Customer Tier Info -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-crown me-2"></i>Hạng thành viên khách hàng
+                        </h6>
+                        <div class="row">
+                            <div class="col-6 col-md-3 text-center mb-2">
+                                <div class="badge bg-secondary p-2">
+                                    <div>Thường</div>
+                                    <small>0đ</small>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 text-center mb-2">
+                                <div class="badge bg-info p-2">
+                                    <div>Bạc</div>
+                                    <small>5M+</small>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 text-center mb-2">
+                                <div class="badge bg-warning p-2">
+                                    <div>Vàng</div>
+                                    <small>20M+</small>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 text-center mb-2">
+                                <div class="badge bg-primary p-2">
+                                    <div>Kim cương</div>
+                                    <small>50M+</small>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            Hạng thành viên được tính dựa trên tổng chi tiêu và mang lại nhiều ưu đãi đặc biệt.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registerForm = document.getElementById('registerForm');
+            const registerBtn = document.getElementById('registerBtn');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const roleInputs = document.querySelectorAll('input[name="role"]');
+            const shopFields = document.getElementById('shopFields');
+            const shopNameInput = document.getElementById('shopName');
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            // Show/hide shop fields based on role selection
+            roleInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    if (this.value === 'shop') {
+                        shopFields.style.display = 'block';
+                        shopNameInput.required = true;
+                    } else {
+                        shopFields.style.display = 'none';
+                        shopNameInput.required = false;
+                    }
+                });
+            });
+
+            // Handle form submission
+            registerForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                registerBtn.disabled = true;
+                registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng ký...';
+
+                try {
+                    const formData = new FormData(registerForm);
+                    const data = Object.fromEntries(formData.entries());
+
+                    const response = await fetch('/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Show success message
+                        const alert = document.createElement('div');
+                        alert.className = 'alert alert-success';
+                        alert.innerHTML = '<i class="fas fa-check me-2"></i>' + result.message;
+                        registerForm.parentNode.insertBefore(alert, registerForm);
+
+                        // Redirect after delay
+                        setTimeout(() => {
+                            window.location.href = result.redirect;
+                        }, 1500);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    // Show error message
+                    const existingAlert = document.querySelector('.alert');
+                    if (existingAlert) existingAlert.remove();
+
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-danger';
+                    alert.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>' + error.message;
+                    registerForm.parentNode.insertBefore(alert, registerForm);
+
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Đăng ký';
+                }
+            });
+        });
+    </script>
+
+    <%- include('../../partials/footer') %>

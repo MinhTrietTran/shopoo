@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-shop"></i> Shopoo - Quản lý cửa hàng
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    Xin chào, <%= user.shopName %>
+                        <% if (user.isVerified) { %>
+                            <span class="badge bg-success ms-1">Đã xác thực</span>
+                            <% } else { %>
+                                <span class="badge bg-warning ms-1">Chưa xác thực</span>
+                                <% } %>
+                </span>
+                <a href="/auth/logout" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2>Dashboard Cửa hàng</h2>
+                <p class="text-muted">Quản lý cửa hàng và sản phẩm của bạn</p>
+            </div>
+        </div>
+
+        <!-- Verification Alert -->
+        <% if (!user.isVerified) { %>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Cửa hàng chưa được xác thực!</strong>
+                Vui lòng liên hệ admin để xác thực cửa hàng và bắt đầu bán hàng.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <% } %>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>0</h4>
+                                        <p class="mb-0">Sản phẩm</p>
+                                    </div>
+                                    <i class="bi bi-box fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>0</h4>
+                                        <p class="mb-0">Đơn hàng</p>
+                                    </div>
+                                    <i class="bi bi-cart-check fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>0đ</h4>
+                                        <p class="mb-0">Doanh thu</p>
+                                    </div>
+                                    <i class="bi bi-currency-dollar fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>0</h4>
+                                        <p class="mb-0">Khách hàng</p>
+                                    </div>
+                                    <i class="bi bi-people fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop Information -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-shop me-2"></i>Thông tin cửa hàng</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Tên cửa hàng:</strong>
+                                    <%= user.shopName %>
+                                </p>
+                                <p><strong>Mô tả:</strong>
+                                    <%= user.description || 'Chưa có mô tả' %>
+                                </p>
+                                <p><strong>Địa chỉ:</strong>
+                                    <%= user.address || 'Chưa cập nhật' %>
+                                </p>
+                                <p><strong>Số điện thoại:</strong>
+                                    <%= user.phone || 'Chưa cập nhật' %>
+                                </p>
+                                <p><strong>Trạng thái:</strong>
+                                    <% if (user.isVerified) { %>
+                                        <span class="badge bg-success">Đã xác thực</span>
+                                        <% } else { %>
+                                            <span class="badge bg-warning">Chưa xác thực</span>
+                                            <% } %>
+                                </p>
+                                <p><strong>Ngày tạo:</strong>
+                                    <%= new Date(user.createdAt).toLocaleDateString('vi-VN') %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-graph-up me-2"></i>Thống kê nhanh</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <h3 class="text-primary">0</h3>
+                                        <p class="small text-muted">Sản phẩm đang bán</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h3 class="text-success">0</h3>
+                                        <p class="small text-muted">Đơn hàng hôm nay</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h3 class="text-warning">0đ</h3>
+                                        <p class="small text-muted">Doanh thu tháng</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h3 class="text-info">0</h3>
+                                        <p class="small text-muted">Đánh giá trung bình</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-lightning me-2"></i>Thao tác nhanh</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-primary w-100" <%=!user.isVerified ? 'disabled' : '' %>>
+                                            <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-success w-100" <%=!user.isVerified ? 'disabled' : '' %>>
+                                            <i class="bi bi-list-check me-2"></i>Quản lý đơn hàng
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-info w-100">
+                                            <i class="bi bi-gear me-2"></i>Cài đặt cửa hàng
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn btn-warning w-100">
+                                            <i class="bi bi-bar-chart me-2"></i>Báo cáo
+                                        </button>
+                                    </div>
+                                </div>
+                                <% if (!user.isVerified) { %>
+                                    <div class="alert alert-info mt-3" role="alert">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Một số tính năng sẽ được kích hoạt sau khi cửa hàng được xác thực.
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
