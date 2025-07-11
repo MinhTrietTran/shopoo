@@ -3,14 +3,14 @@ db = db.getSiblingDB('shopoo');
 
 // Tạo user cho ứng dụng
 db.createUser({
-  user: 'shopoo_user',
-  pwd: 'shopoo_password',
-  roles: [
-    {
-      role: 'readWrite',
-      db: 'shopoo'
-    }
-  ]
+    user: 'shopoo_user',
+    pwd: 'shopoo_password',
+    roles: [
+        {
+            role: 'readWrite',
+            db: 'shopoo'
+        }
+    ]
 });
 
 // Tạo các collections ban đầu
@@ -31,46 +31,46 @@ db.orders.createIndex({ "createdAt": -1 });
 
 // Insert dữ liệu mẫu cho categories
 db.categories.insertMany([
-  {
-    name: "Điện thoại & Phụ kiện",
-    slug: "dien-thoai-phu-kien",
-    description: "Điện thoại smartphone và phụ kiện",
-    image: "/images/categories/phone.jpg",
-    isActive: true,
-    createdAt: new Date()
-  },
-  {
-    name: "Máy tính & Laptop",
-    slug: "may-tinh-laptop",
-    description: "Máy tính để bàn, laptop và linh kiện",
-    image: "/images/categories/laptop.jpg",
-    isActive: true,
-    createdAt: new Date()
-  },
-  {
-    name: "Thời trang Nam",
-    slug: "thoi-trang-nam",
-    description: "Quần áo, giày dép thời trang nam",
-    image: "/images/categories/men-fashion.jpg",
-    isActive: true,
-    createdAt: new Date()
-  },
-  {
-    name: "Thời trang Nữ",
-    slug: "thoi-trang-nu",
-    description: "Quần áo, giày dép thời trang nữ",
-    image: "/images/categories/women-fashion.jpg",
-    isActive: true,
-    createdAt: new Date()
-  },
-  {
-    name: "Gia dụng & Đời sống",
-    slug: "gia-dung-doi-song",
-    description: "Đồ gia dụng và vật dụng sinh hoạt",
-    image: "/images/categories/household.jpg",
-    isActive: true,
-    createdAt: new Date()
-  }
+    {
+        name: "Điện thoại & Phụ kiện",
+        slug: "dien-thoai-phu-kien",
+        description: "Điện thoại smartphone và phụ kiện",
+        image: "/images/categories/phone.jpg",
+        isActive: true,
+        createdAt: new Date()
+    },
+    {
+        name: "Máy tính & Laptop",
+        slug: "may-tinh-laptop",
+        description: "Máy tính để bàn, laptop và linh kiện",
+        image: "/images/categories/laptop.jpg",
+        isActive: true,
+        createdAt: new Date()
+    },
+    {
+        name: "Thời trang Nam",
+        slug: "thoi-trang-nam",
+        description: "Quần áo, giày dép thời trang nam",
+        image: "/images/categories/men-fashion.jpg",
+        isActive: true,
+        createdAt: new Date()
+    },
+    {
+        name: "Thời trang Nữ",
+        slug: "thoi-trang-nu",
+        description: "Quần áo, giày dép thời trang nữ",
+        image: "/images/categories/women-fashion.jpg",
+        isActive: true,
+        createdAt: new Date()
+    },
+    {
+        name: "Gia dụng & Đời sống",
+        slug: "gia-dung-doi-song",
+        description: "Đồ gia dụng và vật dụng sinh hoạt",
+        image: "/images/categories/household.jpg",
+        isActive: true,
+        createdAt: new Date()
+    }
 ]);
 
 print('Database initialized successfully!');
