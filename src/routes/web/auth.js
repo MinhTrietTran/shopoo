@@ -83,7 +83,7 @@ router.post('/login', async (req, res) => {
                 isVerified: user.isVerified
             })
         };
-        
+
         console.log('Login - Session saved:', req.session.user);
         console.log('Login - Session ID:', req.sessionID);
 

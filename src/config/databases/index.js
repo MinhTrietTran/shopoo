@@ -1,6 +1,6 @@
 // Central Database Manager
 const mongoManager = require('./mongodb');
-const redisManager = require('./redis');
+// const redisManager = require('./redis');  // Commented out - not needed yet
 const neo4jManager = require('./neo4j');
 const cassandraManager = require('./cassandra');
 
@@ -8,7 +8,7 @@ class DatabaseManager {
     constructor() {
         this.databases = {
             mongodb: mongoManager,
-            redis: redisManager,
+            // redis: redisManager,  // Commented out - not needed yet
             neo4j: neo4jManager,
             cassandra: cassandraManager
         };
@@ -24,7 +24,7 @@ class DatabaseManager {
             this.activeConnections.add('mongodb');
 
             // Connect to Redis (if implemented)
-            await this.databases.redis.connect();
+            // await this.databases.redis.connect();  // Commented out - not needed yet
 
             // Connect to Neo4j (if implemented)
             await this.databases.neo4j.connect();
@@ -87,9 +87,9 @@ class DatabaseManager {
         return this.databases.mongodb;
     }
 
-    get redis() {
-        return this.databases.redis;
-    }
+    // get redis() {
+    //     return this.databases.redis;
+    // }
 
     get neo4j() {
         return this.databases.neo4j;

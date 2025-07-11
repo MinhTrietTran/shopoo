@@ -1,0 +1,444 @@
+<%- include('../../partials/header') %>
+
+    <div class="container my-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="/products">Sản phẩm</a></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <%= product.name %>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-lg-6">
+                <div class="product-images">
+                    <!-- Main Image -->
+                    <div class="main-image mb-3">
+                        <img id="mainImage" src="<%= product.primaryImage?.url || '/images/no-image.png' %>"
+                            alt="<%= product.name %>" class="img-fluid rounded shadow-sm">
+
+                        <!-- Discount Badge -->
+                        <% if (product.discount.percentage> 0) { %>
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                -<%= product.discount.percentage %>%
+                            </span>
+                            <% } %>
+                    </div>
+
+                    <!-- Thumbnail Images -->
+                    <% if (product.images && product.images.length> 1) { %>
+                        <div class="row">
+                            <% product.images.forEach((image, index)=> { %>
+                                <div class="col-3 mb-2">
+                                    <img src="<%= image.url %>" alt="<%= image.alt || product.name %>"
+                                        class="img-fluid rounded thumbnail-image <%= image.isPrimary ? 'active' : '' %>"
+                                        data-bs-toggle="modal" data-bs-target="#imageModal"
+                                        onclick="changeMainImage('<%= image.url %>')">
+                                </div>
+                                <% }); %>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <!-- Product Name -->
+                    <h1 class="h3 mb-3">
+                        <%= product.name %>
+                    </h1>
+
+                    <!-- Rating -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rating me-2">
+                            <% for (let i=1; i <=5; i++) { %>
+                                <i
+                                    class="fas fa-star <%= i <= product.rating.average ? 'text-warning' : 'text-muted' %>"></i>
+                                <% } %>
+                        </div>
+                        <span class="text-muted">
+                            (<%= product.rating.count %> đánh giá) |
+                                <%= product.views %> lượt xem
+                        </span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="price-section mb-4">
+                        <% if (product.discount.percentage> 0) { %>
+                            <div class="d-flex align-items-center">
+                                <span class="h4 text-danger me-3 mb-0">
+                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                        }).format(product.discountPrice) %>
+                                </span>
+                                <span class="text-decoration-line-through text-muted">
+                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                        }).format(product.price) %>
+                                </span>
+                            </div>
+                            <small class="text-success">
+                                Tiết kiệm: <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                    }).format(product.savings) %>
+                            </small>
+                            <% } else { %>
+                                <span class="h4 text-primary">
+                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                        }).format(product.price) %>
+                                </span>
+                                <% } %>
+                    </div>
+
+                    <!-- Stock Status -->
+                    <div class="stock-status mb-3">
+                        <% if (product.stockStatus==='in_stock' ) { %>
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle me-1"></i>Còn hàng (<%= product.available %> sản phẩm)
+                            </span>
+                            <% } else if (product.stockStatus==='low_stock' ) { %>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Sắp hết hàng (<%= product.available
+                                        %> sản phẩm)
+                                </span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i>Hết hàng
+                                    </span>
+                                    <% } %>
+                    </div>
+
+                    <!-- Short Description -->
+                    <div class="short-description mb-4">
+                        <p class="text-muted">
+                            <%= product.shortDescription %>
+                        </p>
+                    </div>
+
+                    <!-- Key Features -->
+                    <% if (product.specifications && product.specifications.length> 0) { %>
+                        <div class="key-features mb-4">
+                            <h6>Đặc điểm nổi bật:</h6>
+                            <ul class="list-unstyled">
+                                <% product.specifications.slice(0, 5).forEach(spec=> { %>
+                                    <li class="mb-1">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        <strong>
+                                            <%= spec.name %>:
+                                        </strong>
+                                        <%= spec.value %>
+                                    </li>
+                                    <% }); %>
+                            </ul>
+                        </div>
+                        <% } %>
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <% if (product.available> 0) { %>
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <button class="btn btn-primary btn-lg w-100"
+                                                onclick="addToCart('<%= product._id %>')">
+                                                <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button class="btn btn-outline-warning w-100"
+                                                onclick="addToWishlist('<%= product._id %>')">
+                                                <i class="far fa-heart me-2"></i>Yêu thích
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button class="btn btn-outline-info w-100" onclick="shareProduct()">
+                                                <i class="fas fa-share-alt me-2"></i>Chia sẻ
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                        <button class="btn btn-secondary btn-lg w-100" disabled>
+                                            <i class="fas fa-times me-2"></i>Hết hàng
+                                        </button>
+                                        <% } %>
+                            </div>
+
+                            <!-- Seller Info -->
+                            <div class="seller-info mt-4 p-3 bg-light rounded">
+                                <h6>Thông tin người bán</h6>
+                                <div class="d-flex align-items-center">
+                                    <div class="seller-avatar me-3">
+                                        <i class="fas fa-store fa-2x text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">
+                                            <%= product.seller.shopName || product.seller.name %>
+                                                <% if (product.seller.isVerified) { %>
+                                                    <i class="fas fa-check-circle text-success ms-1"
+                                                        title="Đã xác thực"></i>
+                                                    <% } %>
+                                        </h6>
+                                        <small class="text-muted">
+                                            <% if (product.seller.rating) { %>
+                                                <i class="fas fa-star text-warning"></i>
+                                                <%= product.seller.rating.average?.toFixed(1) || 'N/A' %>
+                                                    <% } %>
+                                        </small>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <a href="/seller/<%= product.seller._id %>"
+                                            class="btn btn-sm btn-outline-primary">
+                                            Xem shop
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details Tabs -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                            data-bs-target="#description" type="button" role="tab">
+                            Mô tả sản phẩm
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="specifications-tab" data-bs-toggle="tab"
+                            data-bs-target="#specifications" type="button" role="tab">
+                            Thông số kỹ thuật
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                            type="button" role="tab">
+                            Đánh giá (<%= product.rating.count %>)
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="productTabsContent">
+                    <!-- Description Tab -->
+                    <div class="tab-pane fade show active" id="description" role="tabpanel">
+                        <div class="p-3">
+                            <div class="product-description">
+                                <%- product.description.replace(/\n/g, '<br>' ) %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Specifications Tab -->
+                    <div class="tab-pane fade" id="specifications" role="tabpanel">
+                        <div class="p-3">
+                            <% if (product.specifications && product.specifications.length> 0) { %>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <% product.specifications.forEach(spec=> { %>
+                                            <tr>
+                                                <td style="width: 30%"><strong>
+                                                        <%= spec.name %>
+                                                    </strong></td>
+                                                <td>
+                                                    <%= spec.value %>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                    </table>
+                                </div>
+                                <% } else { %>
+                                    <p class="text-muted">Chưa có thông số kỹ thuật chi tiết.</p>
+                                    <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Tab -->
+                    <div class="tab-pane fade" id="reviews" role="tabpanel">
+                        <div class="p-3">
+                            <div class="reviews-section">
+                                <!-- Reviews will be loaded here via AJAX -->
+                                <div id="reviewsContainer">
+                                    <p class="text-muted">Đang tải đánh giá...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <% if (relatedProducts && relatedProducts.length> 0) { %>
+            <div class="related-products mt-5">
+                <h4 class="mb-4">Sản phẩm liên quan</h4>
+                <div class="row">
+                    <% relatedProducts.forEach(related=> { %>
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card h-100 product-card">
+                                <div class="position-relative">
+                                    <img src="<%= related.primaryImage?.url || '/images/no-image.png' %>"
+                                        class="card-img-top product-image" alt="<%= related.name %>">
+                                    <% if (related.discount.percentage> 0) { %>
+                                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                                            -<%= related.discount.percentage %>%
+                                        </span>
+                                        <% } %>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title">
+                                        <a href="/products/<%= related.seo?.slug || related._id %>"
+                                            class="text-decoration-none">
+                                            <%= related.name %>
+                                        </a>
+                                    </h6>
+                                    <div class="price-info mt-auto">
+                                        <% if (related.discount.percentage> 0) { %>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-danger fw-bold me-2">
+                                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' ,
+                                                        currency: 'VND' }).format(related.discountPrice) %>
+                                                </span>
+                                                <small class="text-decoration-line-through text-muted">
+                                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' ,
+                                                        currency: 'VND' }).format(related.price) %>
+                                                </small>
+                                            </div>
+                                            <% } else { %>
+                                                <span class="text-primary fw-bold">
+                                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' ,
+                                                        currency: 'VND' }).format(related.price) %>
+                                                </span>
+                                                <% } %>
+                                    </div>
+                                    <div class="rating-info mt-2">
+                                        <% for (let i=1; i <=5; i++) { %>
+                                            <i class="fas fa-star <%= i <= related.rating.average ? 'text-warning' : 'text-muted' %>"
+                                                style="font-size: 0.8rem;"></i>
+                                            <% } %>
+                                                <small class="text-muted ms-1">(<%= related.rating.count %>)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+            <% } %>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <%= product.name %>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid" alt="<%= product.name %>">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON-LD for SEO -->
+    <% if (jsonLd) { %>
+        <script type="application/ld+json">
+        <%- JSON.stringify(jsonLd, null, 2) %>
+    </script>
+        <% } %>
+
+            <style>
+                .product-image {
+                    height: 200px;
+                    object-fit: cover;
+                    transition: transform 0.3s ease;
+                }
+
+                .product-card:hover .product-image {
+                    transform: scale(1.05);
+                }
+
+                .thumbnail-image {
+                    height: 80px;
+                    object-fit: cover;
+                    cursor: pointer;
+                    border: 2px solid transparent;
+                    transition: border-color 0.3s ease;
+                }
+
+                .thumbnail-image:hover,
+                .thumbnail-image.active {
+                    border-color: #0d6efd;
+                }
+
+                .rating i {
+                    font-size: 1rem;
+                }
+
+                .product-card {
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+
+                .product-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                }
+            </style>
+
+            <script>
+                function changeMainImage(imageUrl) {
+                    document.getElementById('mainImage').src = imageUrl;
+                    document.getElementById('modalImage').src = imageUrl;
+
+                    // Update active thumbnail
+                    document.querySelectorAll('.thumbnail-image').forEach(img => {
+                        img.classList.remove('active');
+                    });
+                    event.target.classList.add('active');
+                }
+
+                function addToCart(productId) {
+                    // TODO: Implement add to cart functionality
+                    alert('Chức năng giỏ hàng sẽ được triển khai sau!');
+                }
+
+                function addToWishlist(productId) {
+                    // TODO: Implement wishlist functionality
+                    alert('Chức năng danh sách yêu thích sẽ được triển khai sau!');
+                }
+
+                function shareProduct() {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: '<%= product.name %>',
+                            text: '<%= product.shortDescription %>',
+                            url: window.location.href
+                        });
+                    } else {
+                        // Fallback: copy URL to clipboard
+                        navigator.clipboard.writeText(window.location.href).then(() => {
+                            alert('Đã copy link sản phẩm!');
+                        });
+                    }
+                }
+
+                // Load reviews when tab is clicked
+                document.getElementById('reviews-tab').addEventListener('click', function () {
+                    loadReviews('<%= product._id %>');
+                });
+
+                function loadReviews(productId) {
+                    // TODO: Load reviews via AJAX
+                    document.getElementById('reviewsContainer').innerHTML =
+                        '<p class="text-muted">Chức năng đánh giá sẽ được triển khai sau.</p>';
+                }
+            </script>
+
+            <%- include('../../partials/footer') %>

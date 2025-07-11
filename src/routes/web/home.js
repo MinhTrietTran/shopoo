@@ -1,14 +1,31 @@
 const express = require('express');
 const router = express.Router();
+const Product = require('../../models/Product');
 
 // Home page
-router.get('/', (req, res) => {
-    res.render('pages/index', {
-        title: 'Shopoo - Multi-NoSQL E-commerce Platform',
-        user: req.session?.user || null, // Use session user
-        categories: [], // Will load from database later
-        featuredProducts: [] // Will load from database later
-    });
+router.get('/', async (req, res) => {
+    try {
+        // Load featured products from database
+        const featuredProducts = await Product.find({ featured: true })
+            .limit(8)
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.render('pages/index', {
+            title: 'Shopoo - Multi-NoSQL E-commerce Platform',
+            user: req.session?.user || null,
+            categories: [], // Will load from database later
+            featuredProducts: featuredProducts || []
+        });
+    } catch (error) {
+        console.error('Error loading homepage:', error);
+        res.render('pages/index', {
+            title: 'Shopoo - Multi-NoSQL E-commerce Platform',
+            user: req.session?.user || null,
+            categories: [],
+            featuredProducts: []
+        });
+    }
 });
 
 // About page
