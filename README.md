@@ -1,205 +1,186 @@
-# 🛍️ Shopoo - Ứng dụng Thương mại Điện tử
+# Shopoo - Multi-NoSQL E-commerce Platform
 
-Shopoo là một ứng dụng thương mại điện tử đơn giản được phát triển để thực hành ứng dựng các noSQL trong quản lý cơ sở dữ liệu. Ứng dụng lấy cảm hứng từ Shopee nhưng sử dụng tech stack đơn giản và dễ hiểu.
+Nền tảng thương mại điện tử đơn giản được thiết kế để thực hành với nhiều cơ sở dữ liệu NoSQL khác nhau trong một ứng dụng duy nhất.
 
-## 🚀 Tech Stack
+## 🎯 Mục tiêu
 
-- **Backend**: Node.js + Express.js
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Database**: MongoDB, redis, neo4j, cassandra
-- **Template Engine**: EJS
-- **Authentication**: JWT (JSON Web Tokens)
+Dự án này được tối giản hóa để tập trung vào việc học và thực hành với nhiều loại cơ sở dữ liệu NoSQL:
+- **MongoDB**: Cơ sở dữ liệu chính cho dữ liệu sản phẩm
+- **Redis**: Cache và session (sẵn sàng để triển khai)
+- **Neo4j**: Đồ thị quan hệ và gợi ý (sẵn sàng để triển khai)
+- **Cassandra**: Big data và analytics (sẵn sàng để triển khai)
 
-## 📁 Cấu trúc Dự án
+## 🏗️ Cấu trúc Source Code
 
 ```
 shopoo/
+├── docker-compose.yml          # Container orchestration
+├── Dockerfile                  # Node.js app container
+├── package.json               # Dependencies (4 packages chính)
+├── server.js                  # Entry point chính
+├── .env                       # Environment variables
 ├── src/
-│   ├── controllers/        # Xử lý logic business
-│   ├── models/            # MongoDB schemas với Mongoose
-│   ├── routes/            # API routes và web routes
-│   ├── middleware/        # Custom middleware (auth, validation...)
-│   └── config/           # Cấu hình database và app
-├── public/
-│   ├── css/              # Stylesheets
-│   ├── js/               # Client-side JavaScript
-│   └── images/           # Hình ảnh tĩnh
-├── views/
-│   ├── partials/         # EJS partials (header, footer...)
-│   └── pages/            # Các trang chính
-├── package.json
-├── server.js             # Entry point
-└── README.md
+│   ├── config/
+│   │   └── databases/         # 🔥 KIẾN TRÚC MULTI-DATABASE
+│   │       ├── index.js       # Central database manager
+│   │       ├── mongodb.js     # MongoDB connection manager
+│   │       ├── redis.js       # Redis manager (stub)
+│   │       ├── neo4j.js       # Neo4j manager (stub)
+│   │       └── cassandra.js   # Cassandra manager (stub)
+│   └── routes/
+│       └── web/               # Web routes đơn giản
+│           ├── home.js        # Trang chủ
+│           └── products.js    # Danh sách sản phẩm
+├── views/                     # EJS templates
+│   ├── layouts/
+│   │   └── main.ejs          # Layout chính với Bootstrap 5
+│   └── pages/
+│       ├── home.ejs          # Trang chủ
+│       ├── products.ejs      # Danh sách sản phẩm
+│       ├── 404.ejs           # Trang lỗi 404
+│       └── error.ejs         # Trang lỗi hệ thống
+└── public/                    # Static files
+    ├── css/
+    ├── js/
+    └── images/
 ```
 
-## 🎯 Tính năng Chính
+## 🔥 Kiến trúc Multi-Database
 
-### 👤 Quản lý Người dùng
-- [x] Đăng ký tài khoản
-- [x] Đăng nhập/Đăng xuất
-- [x] Quản lý profile cá nhân
-- [x] Authentication với JWT
-
-### 🛒 Quản lý Sản phẩm
-- [x] Hiển thị danh sách sản phẩm
-- [x] Tìm kiếm sản phẩm
-- [x] Lọc theo danh mục
-- [x] Chi tiết sản phẩm
-- [x] Đánh giá và bình luận
-
-### 🛍️ Giỏ hàng & Đặt hàng
-- [x] Thêm/xóa sản phẩm vào giỏ hàng
-- [x] Cập nhật số lượng
-- [x] Thanh toán đơn hàng
-- [x] Lịch sử đơn hàng
-- [x] Tracking đơn hàng
-
-### 🏪 Quản lý Cửa hàng (Admin)
-- [x] Thêm/sửa/xóa sản phẩm
-- [x] Quản lý danh mục
-- [x] Quản lý đơn hàng
-- [x] Thống kê doanh thu
-
-## 🗄️ Database Schema (MongoDB Collections)
-
-### Users Collection
+### Database Manager (`src/config/databases/index.js`)
+Trung tâm quản lý tất cả kết nối database:
 ```javascript
-{
-  _id: ObjectId,
-  username: String,
-  email: String,
-  password: String (hashed),
-  fullName: String,
-  phone: String,
-  address: {
-    street: String,
-    city: String,
-    district: String,
-    ward: String
-  },
-  role: String, // 'user' | 'admin'
-  createdAt: Date,
-  updatedAt: Date
-}
+const dbManager = require('./src/config/databases');
+
+// Kết nối tất cả databases
+await dbManager.connectAll();
+
+// Sử dụng specific database
+const mongoData = await dbManager.mongo.findProducts();
+const cached = await dbManager.redis.get('products');
+const recommendations = await dbManager.neo4j.getRecommendations();
 ```
 
-### Products Collection
-```javascript
-{
-  _id: ObjectId,
-  name: String,
-  description: String,
-  price: Number,
-  originalPrice: Number,
-  discount: Number,
-  images: [String],
-  category: ObjectId, // ref Categories
-  seller: ObjectId,   // ref Users
-  stock: Number,
-  sold: Number,
-  rating: {
-    average: Number,
-    count: Number
-  },
-  specifications: Object,
-  isActive: Boolean,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+### MongoDB Manager (`mongodb.js`)
+- ✅ **Đã triển khai**: Connection pooling, health monitoring
+- 🎯 **Sử dụng cho**: Dữ liệu sản phẩm, đơn hàng, users
 
-### Orders Collection
-```javascript
-{
-  _id: ObjectId,
-  orderNumber: String,
-  user: ObjectId,     // ref Users
-  items: [{
-    product: ObjectId, // ref Products
-    quantity: Number,
-    price: Number
-  }],
-  totalAmount: Number,
-  shippingAddress: Object,
-  status: String,     // 'pending', 'confirmed', 'shipping', 'delivered', 'cancelled'
-  paymentMethod: String,
-  paymentStatus: String,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+### Redis Manager (`redis.js`)
+- ⚠️ **Sẵn sàng triển khai**: Cấu trúc đã sẵn sàng
+- 🎯 **Sẽ sử dụng cho**: Cache, sessions, real-time data
 
-### Categories Collection
-```javascript
-{
-  _id: ObjectId,
-  name: String,
-  slug: String,
-  description: String,
-  image: String,
-  parentCategory: ObjectId, // ref Categories (for subcategories)
-  isActive: Boolean,
-  createdAt: Date
-}
-```
+### Neo4j Manager (`neo4j.js`)
+- ⚠️ **Sẵn sàng triển khai**: Cấu trúc đã sẵn sàng
+- 🎯 **Sẽ sử dụng cho**: Recommendations, social graphs, relationships
 
-## 🛠️ Cài đặt và Chạy dự án
+### Cassandra Manager (`cassandra.js`)
+- ⚠️ **Sẵn sàng triển khai**: Cấu trúc đã sẵn sàng
+- 🎯 **Sẽ sử dụng cho**: Analytics, time-series data, big data
 
-### Yêu cầu hệ thống
-- Node.js >= 14.x
-- MongoDB >= 4.x
-- NPM hoặc Yarn
+## 🚀 Khởi chạy dự án
 
-### Cài đặt
+### Yêu cầu
+- Docker và Docker Compose
+- Node.js 18+ (nếu chạy local)
+
+### 1. Clone và khởi động
 ```bash
-# Clone repository
-git clone https://github.com/MinhTrietTran/shopoo.git
+git clone <repo-url>
 cd shopoo
-
-# Cài đặt dependencies
-npm install
-
-# Tạo file environment variables
-cp .env.example .env
-
-# Cấu hình MongoDB connection trong .env
-MONGODB_URI=mongodb://localhost:27017/shopoo
-JWT_SECRET=your_secret_key_here
-PORT=3000
-
-# Chạy ứng dụng
-npm start
-
-# Hoặc chạy trong development mode
-npm run dev
+docker-compose up -d
 ```
 
-### Scripts NPM
-- `npm start` - Chạy production server
-- `npm run dev` - Chạy development server với nodemon
-- `npm run seed` - Seed dữ liệu mẫu vào database
-- `npm test` - Chạy tests
+### 2. Kiểm tra trạng thái
+- **Web Application**: http://localhost:3000
+- **Health Check**: http://localhost:3000/health
+- **Mongo Express**: http://localhost:8081
 
-## 🌐 API Endpoints
+### 3. Containers
+```bash
+# Kiểm tra containers
+docker-compose ps
 
-### Authentication
-- `POST /api/auth/register` - Đăng ký
-- `POST /api/auth/login` - Đăng nhập
-- `POST /api/auth/logout` - Đăng xuất
-- `GET /api/auth/profile` - Lấy thông tin profile
+# Xem logs
+docker-compose logs -f app
+```
 
-### Products
-- `GET /api/products` - Lấy danh sách sản phẩm
-- `GET /api/products/:id` - Chi tiết sản phẩm
-- `POST /api/products` - Thêm sản phẩm (Admin)
-- `PUT /api/products/:id` - Cập nhật sản phẩm (Admin)
-- `DELETE /api/products/:id` - Xóa sản phẩm (Admin)
+## 📊 Health Monitoring
 
-### Cart & Orders
-- `GET /api/cart` - Lấy giỏ hàng
-- `POST /api/cart/add` - Thêm vào giỏ hàng
-- `PUT /api/cart/update` - Cập nhật giỏ hàng
-- `DELETE /api/cart/remove` - Xóa khỏi giỏ hàng
-- `POST /api/orders` - Đặt hàng
-- `GET /api/orders` - Lịch sử đơn hàng
+Endpoint `/health` cung cấp thông tin về trạng thái tất cả databases:
+```json
+{
+  "status": "OK",
+  "service": "Shopoo Multi-NoSQL App",
+  "databases": {
+    "mongodb": { "connected": true, "status": "healthy" },
+    "redis": { "connected": false, "status": "disconnected" },
+    "neo4j": { "connected": false, "status": "disconnected" },
+    "cassandra": { "connected": false, "status": "disconnected" }
+  }
+}
+```
 
+## 🛠️ Development
+
+### Dependencies tối giản
+```json
+{
+  "express": "Webserver framework",
+  "mongoose": "MongoDB ODM",
+  "ejs": "Template engine",
+  "dotenv": "Environment variables"
+}
+```
+
+### Thêm database mới
+1. Tạo manager trong `src/config/databases/`
+2. Implement interface: `connect()`, `disconnect()`, `isHealthy()`
+3. Thêm vào `index.js`
+4. Update Docker Compose nếu cần
+
+## 🎯 Roadmap để mở rộng
+
+### Phase 1: Redis Implementation
+- [ ] Implement Redis connection
+- [ ] Add caching layer
+- [ ] Session management
+
+### Phase 2: Neo4j Implementation
+- [ ] Setup Neo4j container
+- [ ] Product relationship graphs
+- [ ] Recommendation engine
+
+### Phase 3: Cassandra Implementation
+- [ ] Setup Cassandra cluster
+- [ ] Analytics data pipeline
+- [ ] Time-series data handling
+
+### Phase 4: Advanced Features
+- [ ] Data synchronization between DBs
+- [ ] Performance monitoring
+- [ ] Load balancing strategies
+
+## 🐛 Troubleshooting
+
+### Container issues
+```bash
+# Restart containers
+docker-compose down && docker-compose up -d
+
+# Rebuild app container
+docker-compose build app
+```
+
+### Database connection issues
+- Kiểm tra logs: `docker-compose logs mongo`
+- Verify health endpoint: `curl http://localhost:3000/health`
+
+## 📝 Notes
+
+- UI framework: Bootstrap 5
+- Template engine: EJS
+- Database strategy: Single server, multiple databases
+- Architecture: Microservices-ready với database abstraction
+
+---
+**Mục tiêu**: "1 server nhiều db để thực hành nosql" 

@@ -1,0 +1,172 @@
+<%- include('../partials/header') %>
+
+    <!-- Products Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <!-- Categories Sidebar -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Danh mục
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <a href="/products"
+                                    class="list-group-item list-group-item-action <%= !currentCategory ? 'active' : '' %>">
+                                    Tất cả sản phẩm
+                                </a>
+                                <% categories.forEach(category=> { %>
+                                    <a href="/products?category=<%= category.slug %>"
+                                        class="list-group-item list-group-item-action <%= currentCategory === category.slug ? 'active' : '' %>">
+                                        <%= category.name %>
+                                    </a>
+                                    <% }) %>
+
+                                        <!-- Static categories for demo -->
+                                        <a href="/products?category=electronics"
+                                            class="list-group-item list-group-item-action">
+                                            📱 Điện tử
+                                        </a>
+                                        <a href="/products?category=fashion"
+                                            class="list-group-item list-group-item-action">
+                                            👕 Thời trang
+                                        </a>
+                                        <a href="/products?category=home"
+                                            class="list-group-item list-group-item-action">
+                                            🏠 Nhà cửa
+                                        </a>
+                                        <a href="/products?category=books"
+                                            class="list-group-item list-group-item-action">
+                                            📚 Sách
+                                        </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <!-- Search Results Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <% if (searchQuery) { %>
+                                <h3>Kết quả tìm kiếm: "<%= searchQuery %>"</h3>
+                                <p class="text-muted">Tìm thấy <%= products.length %> sản phẩm</p>
+                                <% } else { %>
+                                    <h3>Tất cả sản phẩm</h3>
+                                    <p class="text-muted">Khám phá bộ sưu tập đa dạng của chúng tôi</p>
+                                    <% } %>
+                        </div>
+
+                        <!-- Sort Options -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-sort me-2"></i>Sắp xếp
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="?sort=name">Tên A-Z</a></li>
+                                <li><a class="dropdown-item" href="?sort=price_asc">Giá thấp đến cao</a></li>
+                                <li><a class="dropdown-item" href="?sort=price_desc">Giá cao đến thấp</a></li>
+                                <li><a class="dropdown-item" href="?sort=newest">Mới nhất</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="row">
+                        <% if (products.length===0) { %>
+                            <!-- Empty State -->
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <h4>Không tìm thấy sản phẩm</h4>
+                                <p class="text-muted">Thử tìm kiếm với từ khóa khác hoặc duyệt qua các danh mục.</p>
+                                <a href="/products" class="btn btn-primary">
+                                    <i class="fas fa-home me-2"></i>Xem tất cả sản phẩm
+                                </a>
+                            </div>
+                            <% } else { %>
+                                <!-- Demo Products (since database is empty) -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="/images/product-demo-1.jpg" class="card-img-top" alt="Demo Product"
+                                            style="height: 200px; object-fit: cover; background: #f8f9fa;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Sản phẩm Demo 1</h5>
+                                            <p class="card-text text-muted">Mô tả sản phẩm demo từ MongoDB</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="h5 text-primary mb-0">1.000.000₫</span>
+                                                <button class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-shopping-cart me-1"></i>Thêm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="/images/product-demo-2.jpg" class="card-img-top" alt="Demo Product"
+                                            style="height: 200px; object-fit: cover; background: #e9ecef;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Sản phẩm Demo 2</h5>
+                                            <p class="card-text text-muted">Sẽ được load từ Redis cache</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="h5 text-primary mb-0">2.000.000₫</span>
+                                                <button class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-shopping-cart me-1"></i>Thêm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="/images/product-demo-3.jpg" class="card-img-top" alt="Demo Product"
+                                            style="height: 200px; object-fit: cover; background: #dee2e6;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Sản phẩm Demo 3</h5>
+                                            <p class="card-text text-muted">Gợi ý từ Neo4j graph database</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="h5 text-primary mb-0">3.000.000₫</span>
+                                                <button class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-shopping-cart me-1"></i>Thêm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                    </div>
+
+                    <!-- Pagination -->
+                    <% if (totalPages> 1) { %>
+                        <nav aria-label="Products pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Trước</a>
+                                </li>
+
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+
+                                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Sau</a>
+                                        </li>
+                            </ul>
+                        </nav>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>

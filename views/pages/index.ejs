@@ -1,149 +1,157 @@
 <%- include('../partials/header') %>
 
-<!-- Hero Section -->
-<section class="hero-section bg-primary text-white py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">
-                    Chào mừng đến với Shopoo
-                </h1>
-                <p class="lead mb-4">
-                    Khám phá hàng ngàn sản phẩm chất lượng với giá tốt nhất. 
-                    Mua sắm dễ dàng, giao hàng nhanh chóng!
-                </p>
-                <a href="/products" class="btn btn-light btn-lg">
-                    <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
-                </a>
-            </div>
-            <div class="col-lg-6 text-center">
-                <img src="/images/hero-shopping.png" alt="Shopping" class="img-fluid" style="max-height: 400px;">
+    <!-- Hero Section -->
+    <section class="hero-section bg-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Chào mừng đến với Shopoo
+                    </h1>
+                    <p class="lead mb-4">
+                        Khám phá hàng ngàn sản phẩm chất lượng với giá tốt nhất.
+                        Mua sắm dễ dàng, giao hàng nhanh chóng!
+                    </p>
+                    <a href="/products" class="btn btn-light btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
+                    </a>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="/images/hero-shopping.png" alt="Shopping" class="img-fluid" style="max-height: 400px;">
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Categories Section -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">Danh mục sản phẩm</h2>
-        <div class="row">
-            <div class="col-md-2 col-6 mb-4">
-                <div class="text-center">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fas fa-mobile-alt fa-2x text-primary"></i>
-                    </div>
-                    <h6 class="mt-3">Điện thoại</h6>
-                </div>
-            </div>
-            <div class="col-md-2 col-6 mb-4">
-                <div class="text-center">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fas fa-laptop fa-2x text-primary"></i>
-                    </div>
-                    <h6 class="mt-3">Laptop</h6>
-                </div>
-            </div>
-            <div class="col-md-2 col-6 mb-4">
-                <div class="text-center">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fas fa-tshirt fa-2x text-primary"></i>
-                    </div>
-                    <h6 class="mt-3">Thời trang</h6>
-                </div>
-            </div>
-            <div class="col-md-2 col-6 mb-4">
-                <div class="text-center">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fas fa-home fa-2x text-primary"></i>
-                    </div>
-                    <h6 class="mt-3">Gia dụng</h6>
-                </div>
-            </div>
-            <div class="col-md-2 col-6 mb-4">
-                <div class="text-center">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fas fa-gamepad fa-2x text-primary"></i>
-                    </div>
-                    <h6 class="mt-3">Gaming</h6>
-                </div>
-            </div>
-            <div class="col-md-2 col-6 mb-4">
-                <div class="text-center">
-                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fas fa-ellipsis-h fa-2x text-primary"></i>
-                    </div>
-                    <h6 class="mt-3">Khác</h6>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Featured Products Section -->
-<section class="bg-light py-5">
-    <div class="container">
-        <div class="row align-items-center mb-4">
-            <div class="col">
-                <h2>Sản phẩm nổi bật</h2>
-            </div>
-            <div class="col-auto">
-                <a href="/products" class="btn btn-outline-primary">Xem tất cả</a>
-            </div>
-        </div>
-        
-        <div class="row">
-            <!-- Product placeholders -->
-            <% for(let i = 0; i < 4; i++) { %>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-image fa-3x text-muted"></i>
+    <!-- Categories Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Danh mục sản phẩm</h2>
+            <div class="row">
+                <div class="col-md-2 col-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-mobile-alt fa-2x text-primary"></i>
                         </div>
-                        <div class="card-body">
-                            <h6 class="card-title">Sản phẩm <%= i + 1 %></h6>
-                            <p class="text-muted small">Mô tả sản phẩm...</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h6 text-primary mb-0">500.000đ</span>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
+                        <h6 class="mt-3">Điện thoại</h6>
+                    </div>
+                </div>
+                <div class="col-md-2 col-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-laptop fa-2x text-primary"></i>
+                        </div>
+                        <h6 class="mt-3">Laptop</h6>
+                    </div>
+                </div>
+                <div class="col-md-2 col-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-tshirt fa-2x text-primary"></i>
+                        </div>
+                        <h6 class="mt-3">Thời trang</h6>
+                    </div>
+                </div>
+                <div class="col-md-2 col-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-home fa-2x text-primary"></i>
+                        </div>
+                        <h6 class="mt-3">Gia dụng</h6>
+                    </div>
+                </div>
+                <div class="col-md-2 col-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-gamepad fa-2x text-primary"></i>
+                        </div>
+                        <h6 class="mt-3">Gaming</h6>
+                    </div>
+                </div>
+                <div class="col-md-2 col-6 mb-4">
+                    <div class="text-center">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-ellipsis-h fa-2x text-primary"></i>
+                        </div>
+                        <h6 class="mt-3">Khác</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center mb-4">
+                <div class="col">
+                    <h2>Sản phẩm nổi bật</h2>
+                </div>
+                <div class="col-auto">
+                    <a href="/products" class="btn btn-outline-primary">Xem tất cả</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Product placeholders -->
+                <% for(let i=0; i < 4; i++) { %>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="bg-light"
+                                style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">Sản phẩm <%= i + 1 %>
+                                </h6>
+                                <p class="text-muted small">Mô tả sản phẩm...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h6 text-primary mb-0">500.000đ</span>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <% } %>
-        </div>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4 mb-4">
-                <div class="mb-3">
-                    <i class="fas fa-shipping-fast fa-3x text-primary"></i>
-                </div>
-                <h5>Giao hàng nhanh</h5>
-                <p class="text-muted">Giao hàng toàn quốc trong 24h</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="mb-3">
-                    <i class="fas fa-shield-alt fa-3x text-primary"></i>
-                </div>
-                <h5>Bảo mật thanh toán</h5>
-                <p class="text-muted">Thanh toán an toàn 100%</p>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="mb-3">
-                    <i class="fas fa-headset fa-3x text-primary"></i>
-                </div>
-                <h5>Hỗ trợ 24/7</h5>
-                <p class="text-muted">Luôn sẵn sàng hỗ trợ khách hàng</p>
+                    <% } %>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<%- include('../partials/footer-scripts') %>
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="mb-3">
+                        <i class="fas fa-shipping-fast fa-3x text-primary"></i>
+                    </div>
+                    <h5>Giao hàng nhanh</h5>
+                    <p class="text-muted">Giao hàng toàn quốc trong 24h</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                    </div>
+                    <h5>Bảo mật thanh toán</h5>
+                    <p class="text-muted">Thanh toán an toàn 100%</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="mb-3">
+                        <i class="fas fa-headset fa-3x text-primary"></i>
+                    </div>
+                    <h5>Hỗ trợ 24/7</h5>
+                    <p class="text-muted">Luôn sẵn sàng hỗ trợ khách hàng</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer-scripts') %>
