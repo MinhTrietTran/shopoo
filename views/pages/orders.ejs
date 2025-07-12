@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+
+    <div class="container my-4">
+        <h2>Đơn hàng</h2>
+
+        <% if (orders && orders.length> 0) { %>
+            <% orders.forEach(order=> { %>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Khách hàng: <%= order.user.name %> - Trạng thái: <%= order.status %>
+                        </h5>
+                        <ul>
+                            <% order.products.forEach(p=> { %>
+                                <li>
+                                    <%= p.product.name %> x <%= p.quantity %>
+                                </li>
+                                <% }) %>
+                        </ul>
+                        <p>Tổng: <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                }).format(order.total) %>
+                        </p>
+                    </div>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <p>Không có đơn hàng nào.</p>
+                        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>

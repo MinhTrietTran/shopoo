@@ -115,8 +115,25 @@ services:
     networks:
       - shopoo-network
 
+    # Neo4j Service
+  neo4j:
+    image: neo4j:5
+    container_name: shopoo-neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"  # Web browser (http://localhost:7474)
+      - "7687:7687"  # Bolt protocol
+    environment:
+      NEO4J_AUTH: "${NEO4J_USER}/${NEO4J_PASSWORD}"
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - shopoo-network
+
 volumes:
   mongodb_data:
+  redis_data:
+  neo4j_data:
 
 networks:
   shopoo-network:

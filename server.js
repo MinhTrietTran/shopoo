@@ -7,6 +7,10 @@ const mongoose = require('mongoose');
 /* ----- Kết nối Redis (khởi tạo client) ----- */
 require('./src/config/databases/redis');
 
+/* ----- Kết nối Neo4j ----- */
+const neo4j = require('./src/config/databases/neo4j');
+
+
 /* ------------- App & Middlware ------------- */
 const app = express();
 
@@ -36,6 +40,7 @@ app.use('/auth', require('./src/routes/web/auth'));   // /auth/*
 app.use('/products', require('./src/routes/web/products'));
 app.use('/dashboard', require('./src/routes/web/dashboard'));
 app.use('/auth/cart', require('./src/routes/web/cart'));
+app.use('/orders', require('./src/routes/web/order')); 
 //404
 app.use('*', (req, res) =>
   res.status(404).render('pages/404', {
@@ -53,6 +58,7 @@ const MONGODB_URI =
 mongoose
   .connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
   .then(() => {
+    neo4j.connect();
     app.listen(PORT, () =>
       console.log(`🚀  Server running at http://localhost:${PORT}`)
     );
