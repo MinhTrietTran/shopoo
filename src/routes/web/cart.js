@@ -69,7 +69,8 @@ router.post('/add', auth.requireAuth, async (req, res) => {
         }
 
         await redisClient.set(`cart:${userId}`, JSON.stringify(cart));
-        res.json({ success: true, message: 'Đã thêm vào giỏ hàng', cart });
+        // Nếu là form submit (không phải AJAX)
+        res.redirect('/auth/cart');
     } catch (error) {
         console.error('Error adding to cart:', error);
         res.status(500).json({ error: 'Lỗi hệ thống' });
@@ -95,11 +96,21 @@ router.post('/remove', auth.requireAuth, async (req, res) => {
         }
 
         await redisClient.set(`cart:${userId}`, JSON.stringify(cart));
-        res.json({ success: true, message: 'Đã xóa sản phẩm khỏi giỏ hàng', cart });
+
+        // Nếu là AJAX request thì trả về JSON, còn lại redirect về trang giỏ hàng
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            res.json({ success: true, message: 'Đã xóa sản phẩm khỏi giỏ hàng', cart });
+        } else {
+            res.redirect('/auth/cart');
+        }
     } catch (error) {
         console.error('Error removing from cart:', error);
-        res.status(500).json({ error: 'Lỗi hệ thống' });
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            res.status(500).json({ error: 'Lỗi hệ thống' });
+        } else {
+            res.redirect('/auth/cart');
+        }
     }
 });
 
-module.exports = router; 
+module.exports = router;

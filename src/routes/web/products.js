@@ -45,8 +45,9 @@ router.get('/', async (req, res) => {
                 break;
         }
 
+        // ...existing code...
         // Execute query with pagination
-        const [products, total] = await Promise.all([
+        const [productsRaw, totalCount] = await Promise.all([
             Product.find(query)
                 .populate('seller', 'name shopName isVerified')
                 .sort(sortOptions)
@@ -56,6 +57,15 @@ router.get('/', async (req, res) => {
             Product.countDocuments(query)
         ]);
 
+        // Tính discountPrice cho từng sản phẩm (nếu có discount)
+        const products = productsRaw.map(product => {
+            let discountPrice = product.price;
+            if (product.discount && product.discount.percentage > 0) {
+                discountPrice = Math.round(product.price * (1 - product.discount.percentage / 100));
+            }
+            return { ...product, discountPrice };
+        });
+
         // Debug log
         console.log('Products found:', products.length);
         if (products.length > 0) {
@@ -63,7 +73,7 @@ router.get('/', async (req, res) => {
         }
 
         // Calculate pagination
-        const totalPages = Math.ceil(total / limit);
+        const totalPages = Math.ceil(totalCount / limit);
         const hasNextPage = page < totalPages;
         const hasPrevPage = page > 1;
 
@@ -87,73 +97,8 @@ router.get('/', async (req, res) => {
                 sort,
                 search: search || ''
             },
-            total,
+            total: totalCount,
             searchQuery: search || ''
-        });
-
-    } catch (error) {
-        console.error('Products listing error:', error);
-        res.status(500).render('pages/error', {
-            title: 'Lỗi hệ thống - Shopoo',
-            user: req.session?.user || null,
-            error: process.env.NODE_ENV === 'development' ? error : {}
-        });
-    }
-});
-
-// Product detail page
-router.get('/:slug', async (req, res) => {
-    try {
-        const slug = req.params.slug;
-
-        // Find product by slug or ID (for backward compatibility)
-        let product = await Product.findOne({
-            $or: [
-                { 'seo.slug': slug },
-                { _id: mongoose.Types.ObjectId.isValid(slug) ? slug : null }
-            ],
-            status: 'active'
-        }).populate('seller', 'name shopName isVerified rating address');
-
-        if (!product) {
-            return res.status(404).render('pages/404', {
-                title: 'Sản phẩm không tìm thấy - Shopoo',
-                user: req.session?.user || null
-            });
-        }
-
-        // Increment view count (async, don't wait)
-        Product.findByIdAndUpdate(product._id, { $inc: { views: 1 } }).exec();
-
-        // Get related products (same category, exclude current)
-        const relatedProducts = await Product.find({
-            category: product.category,
-            _id: { $ne: product._id },
-            status: 'active'
-        })
-            .populate('seller', 'name shopName')
-            .sort({ 'rating.average': -1, views: -1 })
-            .limit(8)
-            .lean();
-
-        // Get more from same seller
-        const moreFromSeller = await Product.find({
-            seller: product.seller._id,
-            _id: { $ne: product._id },
-            status: 'active'
-        })
-            .populate('seller', 'name shopName')
-            .sort({ 'sales.total': -1 })
-            .limit(6)
-            .lean();
-
-        res.render('pages/product-detail', {
-            title: `${product.name} - Shopoo`,
-            user: req.session?.user || null,
-            product,
-            relatedProducts,
-            moreFromSeller,
-            jsonLd: generateProductJsonLd(product) // For SEO
         });
 
     } catch (error) {
