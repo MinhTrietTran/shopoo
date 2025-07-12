@@ -1,0 +1,44 @@
+<%- include('../../partials/header') %>
+    <div class="container py-4">
+        <h2 class="mb-4">Thêm sản phẩm mới</h2>
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+                <% if (success) { %>
+                    <div class="alert alert-success">
+                        <%= success %>
+                    </div>
+                    <% } %>
+                        <form action="/dashboard/shop/products/add" method="POST">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Tên sản phẩm *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Giá (VND) *</label>
+                                <input type="number" class="form-control" id="price" name="price" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Số lượng *</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" required
+                                    min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Danh mục</label>
+                                <input type="text" class="form-control" id="category" name="category">
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Ảnh sản phẩm</label>
+                                <input type="file" class="form-control" id="image" name="image">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+                            <a href="/dashboard/shop" class="btn btn-secondary ms-2">Quay lại</a>
+                        </form>
+    </div>
+    <%- include('../../partials/footer') %>

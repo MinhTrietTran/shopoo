@@ -179,9 +179,9 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
-                                        <button class="btn btn-primary w-100" <%=!user.isVerified ? 'disabled' : '' %>>
+                                        <a href="/dashboard/shop/products/add" class="btn btn-primary w-100 <%=!user.isVerified ? 'disabled' : '' %>" <%=!user.isVerified ? 'tabindex="-1" aria-disabled="true"' : '' %>>
                                             <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm
-                                        </button>
+                                        </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <button class="btn btn-success w-100" <%=!user.isVerified ? 'disabled' : '' %>>

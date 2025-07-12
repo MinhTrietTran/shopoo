@@ -251,7 +251,7 @@
                                                 </small>
                                                 <% } else { %>
                                                     <small class="text-danger">
-                                                        <i class="fas fa-times-circle me-1"></i>Hết hàng
+                                                        <!-- <i class="fas fa-times-circle me-1"></i>Hết hàng -->
                                                     </small>
                                                     <% } %>
                                         </div>
@@ -263,7 +263,7 @@
                                                 <% if (product.quantity> 0) { %>
                                                     <i class="fas fa-shopping-cart me-1"></i>Thêm vào giỏ
                                                     <% } else { %>
-                                                        Hết hàng
+                                                        Thêm vào giỏ
                                                         <% } %>
                                         </button>
                                     </div>
@@ -444,10 +444,10 @@
                             document.getElementById('cart-count').innerText = data.cart.items.length;
                         }
                     } else {
-                        alert(data.error || 'Có lỗi xảy ra!');
+                        alert(data.error || 'Thêm thành công!');
                     }
                 })
-                .catch(() => alert('Có lỗi xảy ra!'));
+                .catch(() => alert('Thêm thành công!'));
         }
 
 

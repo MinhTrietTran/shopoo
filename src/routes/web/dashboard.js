@@ -1,7 +1,88 @@
 const express = require('express');
 const auth = require('../../middleware/auth');
 const { Customer, Shop } = require('../../models/User');
+const Product = require('../../models/Product');
 const router = express.Router();
+// Form thêm sản phẩm mới (shop only)
+router.get('/shop/products/add', auth.requireShop, (req, res) => {
+    res.render('pages/dashboard/add-product', {
+        title: 'Thêm sản phẩm mới',
+        user: req.session.user,
+        error: null,
+        success: null
+    });
+});
+
+// Xử lý submit thêm sản phẩm mới (shop only)
+router.post('/shop/products/add', auth.requireShop, async (req, res) => {
+    try {
+        const { name, description, price, quantity, category } = req.body;
+        console.log('[Add Product] Nhận dữ liệu:', { name, description, price, quantity, category, seller: req.session.user?._id });
+        // Danh sách category hợp lệ
+        const validCategories = [
+            'electronics', 'fashion', 'home', 'beauty', 'sports',
+            'books', 'automotive', 'gaming', 'food', 'other'
+        ];
+        if (!name || !description || !price || !quantity || !category) {
+            console.warn('[Add Product] Thiếu trường bắt buộc');
+            return res.render('pages/dashboard/add-product', {
+                title: 'Thêm sản phẩm mới',
+                user: req.session.user,
+                error: 'Vui lòng nhập đầy đủ thông tin bắt buộc',
+                success: null
+            });
+        }
+        if (!validCategories.includes(category)) {
+            console.warn('[Add Product] Danh mục không hợp lệ:', category);
+            return res.render('pages/dashboard/add-product', {
+                title: 'Thêm sản phẩm mới',
+                user: req.session.user,
+                error: 'Danh mục không hợp lệ. Chọn một trong: ' + validCategories.join(', '),
+                success: null
+            });
+        }
+        // Tạo sản phẩm mới
+        let product;
+        try {
+            product = new Product({
+            name,
+            description,
+            shortDescription: description.substring(0, 100),
+            price,
+            quantity,
+            category,
+            seller: req.session.user._id,
+            images: [], // Cho phép rỗng khi tạo mới
+            status: 'active',
+            stock: { quantity: Number(quantity) }
+        });
+            await product.save();
+            console.log('[Add Product] Đã lưu sản phẩm thành công:', product._id);
+        } catch (err) {
+            console.error('[Add Product] Lỗi khi tạo Product instance hoặc lưu:', err);
+            return res.render('pages/dashboard/add-product', {
+                title: 'Thêm sản phẩm mới',
+                user: req.session.user,
+                error: 'Lỗi khi lưu sản phẩm: ' + (err.message || err),
+                success: null
+            });
+        }
+        res.render('pages/dashboard/add-product', {
+            title: 'Thêm sản phẩm mới',
+            user: req.session.user,
+            error: null,
+            success: 'Đã thêm sản phẩm thành công!'
+        });
+    } catch (error) {
+        console.error('Add product error:', error);
+        res.render('pages/dashboard/add-product', {
+            title: 'Thêm sản phẩm mới',
+            user: req.session.user,
+            error: 'Có lỗi xảy ra khi thêm sản phẩm',
+            success: null
+        });
+    }
+});
 
 // General dashboard (redirects based on role)
 router.get('/', auth.requireAuth, (req, res) => {
